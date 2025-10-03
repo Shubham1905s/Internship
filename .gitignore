@@ -38,3 +38,6 @@ coverage/
 .cache/
 .next/
 out/
+
+# Specific files
+pranavkadagadakai-book_review_system.txt
