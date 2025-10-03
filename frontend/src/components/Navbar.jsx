@@ -20,6 +20,12 @@ export default function Navbar() {
         {user ? (
           <>
             <span className="mr-4">Hello, {user.name}</span>
+            <a href="/add-book" className="mr-4">
+              Add Book
+            </a>
+            <a href="/profile" className="mr-4">
+              Profile
+            </a>
             <button
               onClick={handleLogout}
               className="bg-red-500 px-3 py-1 rounded"

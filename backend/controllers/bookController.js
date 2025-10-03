@@ -21,16 +21,30 @@ exports.createBook = async (req, res, next) => {
 
 exports.getBooks = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const { page = 1, limit = 5, search = "", genre = "", sort = "" } = req.query;
     const skip = (page - 1) * limit;
-    const total = await Book.countDocuments();
-    const books = await Book.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+    let query = {};
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { author: { $regex: search, $options: "i" } }
+      ];
+    }
+    if (genre) query.genre = genre;
+    let sortObj = {};
+    if (sort) {
+      if (sort.startsWith("-")) sortObj[sort.slice(1)] = -1;
+      else sortObj[sort] = 1;
+    } else {
+      sortObj.createdAt = -1;
+    }
+    const total = await Book.countDocuments(query);
+    const books = await Book.find(query).sort(sortObj).skip(skip).limit(Number(limit));
     res.json({
       success: true,
       books,
       totalPages: Math.ceil(total / limit),
-      currentPage: page
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);

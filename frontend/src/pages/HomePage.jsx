@@ -1,22 +1,39 @@
-import { useEffect, useState } from 'react';
-import api from '../services/api';
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
 export default function HomePage() {
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [genre, setGenre] = useState("");
+  const [sort, setSort] = useState("");
 
-  useEffect(() => {
-    api.get(`/books?page=${page}`)
+  const fetchBooks = () => {
+    api.get(`/books?page=${page}&search=${search}&genre=${genre}&sort=${sort}`)
       .then(res => {
         setBooks(res.data.books);
         setTotalPages(res.data.totalPages);
       });
-  }, [page]);
+  };
+
+  useEffect(() => { fetchBooks(); }, [page, search, genre, sort]);
 
   return (
     <div className="max-w-3xl mx-auto mt-6">
       <h1 className="text-2xl font-bold mb-4">Books</h1>
+      <div className="flex gap-2 mb-4">
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search title/author" className="border p-2 rounded" />
+        <input value={genre} onChange={e => setGenre(e.target.value)} placeholder="Genre" className="border p-2 rounded" />
+        <select value={sort} onChange={e => setSort(e.target.value)} className="border p-2 rounded">
+          <option value="">Sort</option>
+          <option value="year">Year ↑</option>
+          <option value="-year">Year ↓</option>
+          <option value="averageRating">Rating ↑</option>
+          <option value="-averageRating">Rating ↓</option>
+        </select>
+        <button onClick={() => setPage(1)} className="bg-blue-600 text-white px-3 py-1 rounded">Apply</button>
+      </div>
       <div className="grid gap-4">
         {books.map(book => (
           <a key={book._id} href={`/books/${book._id}`} className="block border p-4 rounded hover:bg-gray-50">

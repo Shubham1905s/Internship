@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Book = require('../models/Book');
+const Review = require('../models/Review');
 const generateToken = require('../utils/generateToken');
 
 exports.signup = async (req, res, next) => {
@@ -37,6 +39,23 @@ exports.login = async (req, res, next) => {
       success: true,
       token,
       user: { _id: user._id, name: user.name, email: user.email }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.profile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) return res.status(404).json({ success: false, error: "User not found" });
+    const books = await Book.find({ addedBy: req.userId });
+    const reviews = await Review.find({ userId: req.userId }).populate("bookId", "title author");
+    res.json({
+      success: true,
+      user,
+      books,
+      reviews
     });
   } catch (err) {
     next(err);
