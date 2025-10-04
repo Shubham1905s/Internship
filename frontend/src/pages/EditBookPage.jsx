@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function EditBookPage() {
   const { id } = useParams();
@@ -12,20 +13,46 @@ export default function EditBookPage() {
     year: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [bookNotFound, setBookNotFound] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get(`/books/${id}`).then((res) => {
-      const b = res.data.book;
-      setForm({
-        title: b.title,
-        author: b.author,
-        description: b.description,
-        genre: b.genre,
-        year: b.year,
+    // Set initial loading state
+    setLoading(true);
+    setBookNotFound(false);
+
+    api
+      .get(`/books/${id}`)
+      .then((res) => {
+        const b = res.data?.data?.book;
+
+        if (!b) {
+          setBookNotFound(true);
+          return;
+        }
+
+        if (b.title && b.author && b.description) {
+          setForm({
+            title: b.title,
+            author: b.author,
+            description: b.description,
+            genre: b.genre || "",
+            year: b.year,
+          });
+        } else {
+          setBookNotFound(true);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching book:", err);
+        setBookNotFound(true);
+        setError(err.response?.data?.error || "Failed to load book data.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   }, [id]);
 
   const validate = () => {
@@ -47,15 +74,23 @@ export default function EditBookPage() {
     const v = validate();
     if (v) return setError(v);
     setError("");
-    setLoading(true);
+    setIsUpdating(true);
     try {
       await api.put(`/books/${id}`, { ...form, year: Number(form.year) });
       navigate(`/books/${id}`);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to update book");
     }
-    setLoading(false);
+    setIsUpdating(false);
   };
+
+  if (loading) return <LoadingSpinner />;
+  if (bookNotFound)
+    return (
+      <div className="text-center mt-10 text-xl text-red-600">
+        Book Not Found or an Error Occurred.
+      </div>
+    );
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded shadow">
@@ -115,9 +150,9 @@ export default function EditBookPage() {
           <button
             type="submit"
             className="bg-blue-600 text-white p-2 rounded"
-            disabled={loading}
+            disabled={isUpdating}
           >
-            {loading ? "Updating..." : "Update Book"}
+            {isUpdating ? "Updating..." : "Update Book"}
           </button>
           <button
             type="button"
