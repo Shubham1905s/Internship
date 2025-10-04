@@ -1,19 +1,22 @@
 const Book = require('../models/Book');
 const Review = require('../models/Review');
+const { validationResult } = require('express-validator');
 
 exports.createBook = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, error: errors.array()[0].msg, statusCode: 400 });
+  }
   try {
     const { title, author, description, genre, year } = req.body;
-    if (!title || !author || !description || !genre || !year) {
-      return res.status(400).json({ success: false, error: 'All fields are required' });
-    }
-    if (year < 1000 || year > 2025) {
-      return res.status(400).json({ success: false, error: 'Year must be between 1000 and 2025' });
-    }
     const book = await Book.create({
       title, author, description, genre, year, addedBy: req.userId
     });
-    res.status(201).json({ success: true, book });
+    return res.status(201).json({
+      success: true,
+      data: { book },
+      message: "Book created successfully"
+    });
   } catch (err) {
     next(err);
   }
@@ -40,11 +43,14 @@ exports.getBooks = async (req, res, next) => {
     }
     const total = await Book.countDocuments(query);
     const books = await Book.find(query).sort(sortObj).skip(skip).limit(Number(limit));
-    res.json({
+    return res.json({
       success: true,
-      books,
-      totalPages: Math.ceil(total / limit),
-      currentPage: Number(page)
+      data: {
+        books,
+        totalPages: Math.ceil(total / limit),
+        currentPage: Number(page)
+      },
+      message: "Books fetched successfully"
     });
   } catch (err) {
     next(err);
@@ -54,32 +60,41 @@ exports.getBooks = async (req, res, next) => {
 exports.getBook = async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
-    if (!book) return res.status(404).json({ success: false, error: 'Book not found' });
+    if (!book) return res.status(404).json({ success: false, error: 'Book not found', statusCode: 404 });
     const reviewCount = await Review.countDocuments({ bookId: book._id });
-    res.json({ success: true, book, reviewCount });
+    return res.json({
+      success: true,
+      data: { book, reviewCount },
+      message: "Book fetched successfully"
+    });
   } catch (err) {
     next(err);
   }
 };
 
 exports.updateBook = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, error: errors.array()[0].msg, statusCode: 400 });
+  }
   try {
     const book = await Book.findById(req.params.id);
-    if (!book) return res.status(404).json({ success: false, error: 'Book not found' });
+    if (!book) return res.status(404).json({ success: false, error: 'Book not found', statusCode: 404 });
     if (book.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized' });
+      return res.status(403).json({ success: false, error: 'Unauthorized', statusCode: 403 });
     }
     const { title, author, description, genre, year } = req.body;
-    if (year && (year < 1000 || year > 2025)) {
-      return res.status(400).json({ success: false, error: 'Year must be between 1000 and 2025' });
-    }
     if (title) book.title = title;
     if (author) book.author = author;
     if (description) book.description = description;
     if (genre) book.genre = genre;
     if (year) book.year = year;
     await book.save();
-    res.json({ success: true, book });
+    return res.json({
+      success: true,
+      data: { book },
+      message: "Book updated successfully"
+    });
   } catch (err) {
     next(err);
   }
@@ -88,13 +103,17 @@ exports.updateBook = async (req, res, next) => {
 exports.deleteBook = async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
-    if (!book) return res.status(404).json({ success: false, error: 'Book not found' });
+    if (!book) return res.status(404).json({ success: false, error: 'Book not found', statusCode: 404 });
     if (book.addedBy.toString() !== req.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized' });
+      return res.status(403).json({ success: false, error: 'Unauthorized', statusCode: 403 });
     }
     await book.deleteOne();
     await Review.deleteMany({ bookId: book._id });
-    res.json({ success: true, message: 'Book deleted' });
+    return res.json({
+      success: true,
+      data: null,
+      message: "Book deleted successfully"
+    });
   } catch (err) {
     next(err);
   }

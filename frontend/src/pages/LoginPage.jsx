@@ -8,19 +8,31 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useContext(AuthContext);
 
+  const validate = () => {
+    if (!form.email.includes("@")) return "Invalid email";
+    if (!form.password) return "Password is required";
+    return "";
+  };
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const v = validate();
+    if (v) return setError(v);
     setError("");
     setLoading(true);
     try {
       const res = await api.post("/auth/login", form);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setUser(res.data.user);
-      window.location.replace("/"); // Use replace for redirect
+      if (res.data && res.data.success) {
+        localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.data.user));
+        setUser(res.data.data.user);
+        window.location.replace("/");
+      } else {
+        setError(res.data?.error || "Login failed");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
     }
@@ -28,8 +40,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl mb-4 font-bold">Login</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded shadow">
+      <h2 className="text-2xl mb-4 font-bold dark:text-white">Login</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           name="email"
@@ -56,9 +68,8 @@ export default function LoginPage() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-        Don't have an account?{" "}
         <a href="/signup" className="text-blue-600 text-sm">
-          Sign up
+          Don't have an account? Sign up
         </a>
         {error && <div className="text-red-600">{error}</div>}
       </form>

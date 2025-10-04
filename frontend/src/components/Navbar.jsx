@@ -1,8 +1,14 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, setUser } = useContext(AuthContext);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    if (dark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [dark]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -20,6 +26,9 @@ export default function Navbar() {
         {user ? (
           <>
             <span className="mr-4">Hello, {user.name}</span>
+            <a href="/" className="mr-4">
+              Home
+            </a>
             <a href="/add-book" className="mr-4">
               Add Book
             </a>
@@ -35,12 +44,18 @@ export default function Navbar() {
           </>
         ) : (
           <>
+            <a href="/" className="mr-4">
+              Home
+            </a>
             <a href="/login" className="mr-4">
               Login
             </a>
             <a href="/signup">Signup</a>
           </>
         )}
+        <button onClick={() => setDark((d) => !d)} className="ml-4">
+          {dark ? "🌙" : "☀️"}
+        </button>
       </div>
     </nav>
   );

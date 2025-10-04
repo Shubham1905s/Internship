@@ -1,30 +1,58 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function BookDetailsPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [reviewText, setReviewText] = useState('');
-  const [rating, setRating] = useState(5);
-  const [error, setError] = useState('');
+  const [distribution, setDistribution] = useState([0,0,0,0,0]);
+  const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState("");
+  const [error, setError] = useState("");
   const [editingReviewId, setEditingReviewId] = useState(null);
-  const [editReviewText, setEditReviewText] = useState('');
   const [editRating, setEditRating] = useState(5);
+  const [editReviewText, setEditReviewText] = useState("");
 
   useEffect(() => {
-    api.get(`/books/${id}`).then(res => setBook(res.data.book));
-    api.get(`/books/${id}/reviews`).then(res => setReviews(res.data.reviews));
+    setLoading(true);
+    Promise.all([
+      api.get(`/books/${id}`),
+      api.get(`/books/${id}/reviews`),
+      api.get(`/books/${id}/rating-distribution`)
+    ])
+      .then(([bookRes, reviewsRes, distRes]) => {
+        setBook(bookRes.data?.data?.book || null);
+        setReviews(reviewsRes.data?.data?.reviews || []);
+        setDistribution(distRes.data?.data?.distribution || [0,0,0,0,0]);
+      })
+      .catch(() => {
+        setBook(null);
+        setReviews([]);
+        setDistribution([0,0,0,0,0]);
+      })
+      .finally(() => setLoading(false));
   }, [id, refresh]);
 
   const handleReview = async e => {
     e.preventDefault();
-    setError('');
+    setError("");
+    if (!reviewText || reviewText.length < 10) {
+      setError("Review must be at least 10 characters.");
+      return;
+    }
+    if (rating < 1 || rating > 5) {
+      setError("Rating must be between 1 and 5.");
+      return;
+    }
     try {
       await api.post(`/books/${id}/reviews`, { rating, reviewText });
       setReviewText('');
@@ -72,10 +100,11 @@ export default function BookDetailsPage() {
     }
   };
 
-  if (!book) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!book) return <div className="text-red-600">Book not found.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-6">
+    <div className="max-w-2xl mx-auto mt-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded shadow">
       <h2 className="text-xl font-bold">{book.title}</h2>
       <div className="text-gray-600">{book.author} ({book.year})</div>
       <div className="text-gray-500">{book.genre}</div>
@@ -100,35 +129,48 @@ export default function BookDetailsPage() {
       <h3 className="font-bold mb-2">Reviews</h3>
       <div className="flex flex-col gap-2">
         {reviews.length === 0 && <div>No reviews yet.</div>}
-        {reviews.map(r => (
-          <div key={r._id} className="border p-2 rounded">
-            {editingReviewId === r._id ? (
-              <form onSubmit={handleUpdateReview} className="flex flex-col gap-2">
-                <select value={editRating} onChange={e => setEditRating(Number(e.target.value))} className="border p-1 rounded w-24">
-                  {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Star{n>1?'s':''}</option>)}
-                </select>
-                <textarea value={editReviewText} onChange={e => setEditReviewText(e.target.value)} className="border p-2 rounded" minLength={10} required />
-                <div className="flex gap-2">
-                  <button type="submit" className="bg-blue-600 text-white px-2 py-1 rounded">Save</button>
-                  <button type="button" onClick={() => setEditingReviewId(null)} className="bg-gray-400 text-white px-2 py-1 rounded">Cancel</button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <div className="font-bold">{r.userId?.name || "User"}</div>
-                <div className="text-yellow-600">★ {r.rating}</div>
-                <div>{r.reviewText}</div>
-                {user && r.userId?._id === user._id && (
-                  <div className="flex gap-2 mt-1">
-                    <button onClick={() => handleEditReview(r)} className="text-blue-600 text-xs">Edit</button>
-                    <button onClick={() => handleDeleteReview(r._id)} className="text-red-600 text-xs">Delete</button>
+        {reviews
+          .slice()
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map(r => (
+            <div key={r._id} className="border p-2 rounded">
+              <div className="font-bold">{r.userId?.name || "User"}</div>
+              <div className="text-yellow-600">★ {r.rating}</div>
+              <div>{r.reviewText}</div>
+              <div className="text-xs text-gray-500">{new Date(r.createdAt).toLocaleString()}</div>
+              {editingReviewId === r._id ? (
+                <form onSubmit={handleUpdateReview} className="flex flex-col gap-2">
+                  <select value={editRating} onChange={e => setEditRating(Number(e.target.value))} className="border p-1 rounded w-24">
+                    {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Star{n>1?'s':''}</option>)}
+                  </select>
+                  <textarea value={editReviewText} onChange={e => setEditReviewText(e.target.value)} className="border p-2 rounded" minLength={10} required />
+                  <div className="flex gap-2">
+                    <button type="submit" className="bg-blue-600 text-white px-2 py-1 rounded">Save</button>
+                    <button type="button" onClick={() => setEditingReviewId(null)} className="bg-gray-400 text-white px-2 py-1 rounded">Cancel</button>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        ))}
+                </form>
+              ) : (
+                <div className="flex gap-2 mt-1">
+                  {user && r.userId?._id === user._id && (
+                    <>
+                      <button onClick={() => handleEditReview(r)} className="text-blue-600 text-xs">Edit</button>
+                      <button onClick={() => handleDeleteReview(r._id)} className="text-red-600 text-xs">Delete</button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
       </div>
+      <h3 className="font-bold mb-2">Rating Distribution</h3>
+      <ResponsiveContainer width="100%" height={200}>
+        <BarChart data={distribution.map((v,i)=>({star: `${i+1}★`, count: v}))}>
+          <XAxis dataKey="star" />
+          <YAxis allowDecimals={false} />
+          <Tooltip />
+          <Bar dataKey="count" fill="#2563eb" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }

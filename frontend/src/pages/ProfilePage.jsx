@@ -1,23 +1,33 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [books, setBooks] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/auth/profile").then(res => {
-      setUser(res.data.user);
-      setBooks(res.data.books);
-      setReviews(res.data.reviews);
-    });
+    api.get("/auth/profile")
+      .then(res => {
+        setUser(res.data?.data?.user || null);
+        setBooks(res.data?.data?.books || []);
+        setReviews(res.data?.data?.reviews || []);
+      })
+      .catch(() => {
+        setUser(null);
+        setBooks([]);
+        setReviews([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  if (!user) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!user) return <div className="text-red-600">Could not load profile.</div>;
 
   return (
-    <div className="max-w-3xl mx-auto mt-8">
+    <div className="max-w-3xl mx-auto mt-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded shadow">
       <h2 className="text-2xl font-bold mb-2">Profile</h2>
       <div className="mb-4">
         <div><b>Name:</b> {user.name}</div>

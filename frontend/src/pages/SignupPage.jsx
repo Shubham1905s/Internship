@@ -2,19 +2,41 @@ import { useState } from "react";
 import api from "../services/api";
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
+  const validate = () => {
+    if (!form.name || form.name.length < 2)
+      return "Name must be at least 2 characters";
+    if (!form.email.includes("@")) return "Invalid email";
+    if (form.password.length < 6)
+      return "Password must be at least 6 characters";
+    if (form.password !== form.confirm) return "Passwords do not match";
+    return "";
+  };
+
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    const v = validate();
+    if (v) return setError(v);
     setLoading(true);
     try {
-      await api.post("/auth/signup", form);
+      await api.post("/auth/signup", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
       window.location.replace("/login"); // Use replace for redirect
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed");
@@ -23,7 +45,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded shadow">
       <h2 className="text-2xl mb-4 font-bold">Sign Up</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -52,6 +74,15 @@ export default function SignupPage() {
           required
           className="border p-2 rounded"
         />
+        <input
+          name="confirm"
+          type="password"
+          placeholder="Confirm Password"
+          value={form.confirm}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
         <button
           type="submit"
           className="bg-blue-600 text-white py-2 rounded"
@@ -59,10 +90,6 @@ export default function SignupPage() {
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
-        Already have an account?
-        <a href="/login" className="text-blue-600 text-sm">
-          Login
-        </a>
         {error && <div className="text-red-600">{error}</div>}
       </form>
     </div>
