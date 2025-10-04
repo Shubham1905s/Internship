@@ -31,9 +31,11 @@ export default function EditBookPage() {
   const validate = () => {
     if (!form.title) return "Title is required";
     if (!form.author) return "Author is required";
-    if (!form.description || form.description.length < 10) return "Description must be at least 10 characters";
+    if (!form.description || form.description.length < 10)
+      return "Description must be at least 10 characters";
     if (!form.genre) return "Genre is required";
-    if (!form.year || isNaN(form.year) || form.year < 1000 || form.year > 2025) return "Year must be between 1000 and 2025";
+    if (!form.year || isNaN(form.year) || form.year < 1000 || form.year > 2025)
+      return "Year must be between 1000 and 2025";
     return "";
   };
 
@@ -59,16 +61,62 @@ export default function EditBookPage() {
     <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded shadow">
       <h2 className="text-2xl mb-4 font-bold dark:text-white">Edit Book</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required className="border p-2 rounded" />
-        <input name="author" placeholder="Author" value={form.author} onChange={handleChange} required className="border p-2 rounded" />
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required className="border p-2 rounded" />
-        <input name="genre" placeholder="Genre" value={form.genre} onChange={handleChange} required className="border p-2 rounded" />
-        <input name="year" type="number" placeholder="Year" value={form.year} onChange={handleChange} required min={1000} max={2025} className="border p-2 rounded" />
+        <input
+          name="title"
+          placeholder="Title"
+          value={form.title}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <input
+          name="author"
+          placeholder="Author"
+          value={form.author}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={form.description}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <input
+          name="genre"
+          placeholder="Genre"
+          value={form.genre}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <input
+          name="year"
+          type="number"
+          placeholder="Year"
+          value={form.year}
+          onChange={handleChange}
+          required
+          min={1000}
+          max={2025}
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+        />
         <div className="flex gap-2">
-          <button type="submit" className="bg-blue-600 text-white py-2 rounded" disabled={loading}>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-2 rounded"
+            disabled={loading}
+          >
             {loading ? "Updating..." : "Update Book"}
           </button>
-          <button type="button" className="bg-gray-400 text-white py-2 rounded" onClick={() => navigate(-1)}>
+          <button
+            type="button"
+            className="bg-gray-400 text-white py-2 rounded"
+            onClick={() => navigate(-1)}
+          >
             Cancel
           </button>
         </div>

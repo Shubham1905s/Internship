@@ -53,7 +53,7 @@ export default function AddBookPage() {
           value={form.title}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="author"
@@ -61,7 +61,7 @@ export default function AddBookPage() {
           value={form.author}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <textarea
           name="description"
@@ -69,7 +69,7 @@ export default function AddBookPage() {
           value={form.description}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="genre"
@@ -77,7 +77,7 @@ export default function AddBookPage() {
           value={form.genre}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="year"
@@ -88,7 +88,7 @@ export default function AddBookPage() {
           required
           min={1000}
           max={2025}
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <div className="flex gap-2">
           <button

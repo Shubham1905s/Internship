@@ -12,8 +12,6 @@ import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <AuthProvider>
       <BrowserRouter>

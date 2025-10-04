@@ -54,7 +54,7 @@ export default function SignupPage() {
           value={form.name}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="email"
@@ -63,7 +63,7 @@ export default function SignupPage() {
           value={form.email}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="password"
@@ -72,7 +72,7 @@ export default function SignupPage() {
           value={form.password}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           name="confirm"
@@ -81,7 +81,7 @@ export default function SignupPage() {
           value={form.confirm}
           onChange={handleChange}
           required
-          className="border p-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
         <button
           type="submit"

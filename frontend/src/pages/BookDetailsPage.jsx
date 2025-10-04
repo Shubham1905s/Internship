@@ -1,15 +1,22 @@
-import { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
+import LoadingSpinner from "../components/LoadingSpinner";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function BookDetailsPage() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [distribution, setDistribution] = useState([0,0,0,0,0]);
+  const [distribution, setDistribution] = useState([0, 0, 0, 0, 0]);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const { user } = useContext(AuthContext);
@@ -27,22 +34,22 @@ export default function BookDetailsPage() {
     Promise.all([
       api.get(`/books/${id}`),
       api.get(`/books/${id}/reviews`),
-      api.get(`/books/${id}/rating-distribution`)
+      api.get(`/books/${id}/rating-distribution`),
     ])
       .then(([bookRes, reviewsRes, distRes]) => {
         setBook(bookRes.data?.data?.book || null);
         setReviews(reviewsRes.data?.data?.reviews || []);
-        setDistribution(distRes.data?.data?.distribution || [0,0,0,0,0]);
+        setDistribution(distRes.data?.data?.distribution || [0, 0, 0, 0, 0]);
       })
       .catch(() => {
         setBook(null);
         setReviews([]);
-        setDistribution([0,0,0,0,0]);
+        setDistribution([0, 0, 0, 0, 0]);
       })
       .finally(() => setLoading(false));
   }, [id, refresh]);
 
-  const handleReview = async e => {
+  const handleReview = async (e) => {
     e.preventDefault();
     setError("");
     if (!reviewText || reviewText.length < 10) {
@@ -55,11 +62,11 @@ export default function BookDetailsPage() {
     }
     try {
       await api.post(`/books/${id}/reviews`, { rating, reviewText });
-      setReviewText('');
+      setReviewText("");
       setRating(5);
-      setRefresh(r => !r);
+      setRefresh((r) => !r);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to add review');
+      setError(err.response?.data?.error || "Failed to add review");
     }
   };
 
@@ -72,9 +79,12 @@ export default function BookDetailsPage() {
   const handleUpdateReview = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/reviews/${editingReviewId}`, { rating: editRating, reviewText: editReviewText });
+      await api.put(`/reviews/${editingReviewId}`, {
+        rating: editRating,
+        reviewText: editReviewText,
+      });
       setEditingReviewId(null);
-      setRefresh(r => !r);
+      setRefresh((r) => !r);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to update review");
     }
@@ -84,19 +94,19 @@ export default function BookDetailsPage() {
     if (!window.confirm("Delete this review?")) return;
     try {
       await api.delete(`/reviews/${reviewId}`);
-      setRefresh(r => !r);
+      setRefresh((r) => !r);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to delete review");
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this book?')) return;
+    if (!window.confirm("Are you sure you want to delete this book?")) return;
     try {
       await api.delete(`/books/${id}`);
-      navigate('/');
+      navigate("/");
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to delete book');
+      alert(err.response?.data?.error || "Failed to delete book");
     }
   };
 
@@ -106,24 +116,55 @@ export default function BookDetailsPage() {
   return (
     <div className="max-w-2xl mx-auto mt-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded shadow">
       <h2 className="text-xl font-bold">{book.title}</h2>
-      <div className="text-gray-600">{book.author} ({book.year})</div>
+      <div className="text-gray-600">
+        {book.author} ({book.year})
+      </div>
       <div className="text-gray-500">{book.genre}</div>
       <div className="my-2">{book.description}</div>
-      <div className="text-yellow-600">★ {book.averageRating || 0} ({book.reviewCount || 0} reviews)</div>
+      <div className="text-yellow-600">
+        ★ {book.averageRating || 0} ({book.reviewCount || 0} reviews)
+      </div>
       {user && book.addedBy === user._id && (
         <div className="flex gap-2 my-2">
-          <button onClick={() => navigate(`/books/${id}/edit`)} className="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
-          <button onClick={handleDelete} className="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+          <button
+            onClick={() => navigate(`/books/${id}/edit`)}
+            className="bg-yellow-500 text-white px-3 py-1 rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={handleDelete}
+            className="bg-red-600 text-white px-3 py-1 rounded"
+          >
+            Delete
+          </button>
         </div>
       )}
-      <hr className="my-4" />
+      <hr className="my-4 border-gray-200 dark:border-gray-700" />
       <h3 className="font-bold mb-2">Add a Review</h3>
       <form onSubmit={handleReview} className="flex flex-col gap-2 mb-4">
-        <select value={rating} onChange={e => setRating(Number(e.target.value))} className="border p-1 rounded w-24">
-          {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Star{n>1?'s':''}</option>)}
+        <select
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+          className="border border-gray-300 dark:border-gray-600 p-1 rounded w-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        >
+          {[5, 4, 3, 2, 1].map((n) => (
+            <option key={n} value={n}>
+              {n} Star{n > 1 ? "s" : ""}
+            </option>
+          ))}
         </select>
-        <textarea value={reviewText} onChange={e => setReviewText(e.target.value)} placeholder="Write your review..." className="border p-2 rounded" minLength={10} required />
-        <button type="submit" className="bg-blue-600 text-white py-1 rounded">Submit Review</button>
+        <textarea
+          value={reviewText}
+          onChange={(e) => setReviewText(e.target.value)}
+          placeholder="Write your review..."
+          className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          minLength={10}
+          required
+        />
+        <button type="submit" className="bg-blue-600 text-white py-1 rounded">
+          Submit Review
+        </button>
         {error && <div className="text-red-600">{error}</div>}
       </form>
       <h3 className="font-bold mb-2">Reviews</h3>
@@ -132,29 +173,72 @@ export default function BookDetailsPage() {
         {reviews
           .slice()
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .map(r => (
-            <div key={r._id} className="border p-2 rounded">
+          .map((r) => (
+            <div
+              key={r._id}
+              className="border border-gray-200 dark:border-gray-700 p-2 rounded"
+            >
               <div className="font-bold">{r.userId?.name || "User"}</div>
               <div className="text-yellow-600">★ {r.rating}</div>
               <div>{r.reviewText}</div>
-              <div className="text-xs text-gray-500">{new Date(r.createdAt).toLocaleString()}</div>
+              <div className="text-xs text-gray-500">
+                {new Date(r.createdAt).toLocaleString()}
+              </div>
               {editingReviewId === r._id ? (
-                <form onSubmit={handleUpdateReview} className="flex flex-col gap-2">
-                  <select value={editRating} onChange={e => setEditRating(Number(e.target.value))} className="border p-1 rounded w-24">
-                    {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Star{n>1?'s':''}</option>)}
+                <form
+                  onSubmit={handleUpdateReview}
+                  className="flex flex-col gap-2 mt-2"
+                >
+                  <select
+                    value={editRating}
+                    onChange={(e) => setEditRating(Number(e.target.value))}
+                    className="border border-gray-300 dark:border-gray-600 p-1 rounded w-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    {[5, 4, 3, 2, 1].map((n) => (
+                      <option key={n} value={n}>
+                        {n} Star{n > 1 ? "s" : ""}
+                      </option>
+                    ))}
                   </select>
-                  <textarea value={editReviewText} onChange={e => setEditReviewText(e.target.value)} className="border p-2 rounded" minLength={10} required />
+                  <textarea
+                    value={editReviewText}
+                    onChange={(e) => setEditReviewText(e.target.value)}
+                    className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    minLength={10}
+                    required
+                  />
                   <div className="flex gap-2">
-                    <button type="submit" className="bg-blue-600 text-white px-2 py-1 rounded">Save</button>
-                    <button type="button" onClick={() => setEditingReviewId(null)} className="bg-gray-400 text-white px-2 py-1 rounded">Cancel</button>
+                    <button
+                      type="submit"
+                      className="bg-blue-600 text-white px-2 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingReviewId(null)}
+                      className="bg-gray-400 text-white px-2 py-1 rounded"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </form>
               ) : (
                 <div className="flex gap-2 mt-1">
                   {user && r.userId?._id === user._id && (
                     <>
-                      <button onClick={() => handleEditReview(r)} className="text-blue-600 text-xs">Edit</button>
-                      <button onClick={() => handleDeleteReview(r._id)} className="text-red-600 text-xs">Delete</button>
+                      <button
+                        onClick={() => handleEditReview(r)}
+                        className="text-blue-600 text-xs"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteReview(r._id)}
+                        className="text-red-600 text-xs"
+                      >
+                        Delete
+                      </button>
                     </>
                   )}
                 </div>
@@ -164,7 +248,9 @@ export default function BookDetailsPage() {
       </div>
       <h3 className="font-bold mb-2">Rating Distribution</h3>
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={distribution.map((v,i)=>({star: `${i+1}★`, count: v}))}>
+        <BarChart
+          data={distribution.map((v, i) => ({ star: `${i + 1}★`, count: v }))}
+        >
           <XAxis dataKey="star" />
           <YAxis allowDecimals={false} />
           <Tooltip />

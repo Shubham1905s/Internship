@@ -1,58 +1,68 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { FaSun, FaMoon } from "react-icons/fa6";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const { user, setUser } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
-    <nav className="flex justify-between items-center p-4 bg-blue-600 text-white">
-      <a href="/" className="font-bold text-lg">
+    <nav className="flex justify-between items-center p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-md">
+      <Link
+        to="/"
+        className="font-bold text-lg text-blue-600 dark:text-blue-400"
+      >
         Book Review Platform
-      </a>
-      <div>
+      </Link>
+      <div className="flex items-center gap-4">
         {user ? (
           <>
-            <span className="mr-4">Hello, {user.name}</span>
-            <a href="/" className="mr-4">
+            <span className="hidden sm:inline">Hello, {user.name}</span>
+            <Link to="/" className="hover:text-blue-500">
               Home
-            </a>
-            <a href="/add-book" className="mr-4">
+            </Link>
+            <Link to="/add-book" className="hover:text-blue-500">
               Add Book
-            </a>
-            <a href="/profile" className="mr-4">
+            </Link>
+            <Link to="/profile" className="hover:text-blue-500">
               Profile
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
-              className="bg-red-500 px-3 py-1 rounded"
+              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
             >
               Logout
             </button>
           </>
         ) : (
           <>
-            <a href="/" className="mr-4">
+            <Link to="/" className="hover:text-blue-500">
               Home
-            </a>
-            <a href="/login" className="mr-4">
+            </Link>
+            <Link to="/login" className="hover:text-blue-500">
               Login
-            </a>
-            <a href="/signup">Signup</a>
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+            >
+              Signup
+            </Link>
           </>
         )}
         <button
           onClick={toggleTheme}
-          className="p-1 ml-4 rounded-lg bg-gray-200 dark:bg-gray-700"
+          className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
           title="Toggle Theme"
         >
           {theme === "dark" ? <FaSun /> : <FaMoon />}
