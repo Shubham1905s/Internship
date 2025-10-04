@@ -1,13 +1,14 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/database");
-const authRoutes = require("./routes/authRoutes");
-const bookRoutes = require("./routes/bookRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const errorHandler = require("./middleware/errorHandler");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+import cors from "cors";
+import connectDB from "./config/database.js";
+import authRoutes from "./routes/authRoutes.js";
+import bookRoutes from "./routes/bookRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import errorHandler from "./middleware/errorHandler.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 const allowedOrigins = [process.env.FRONTEND_URL];

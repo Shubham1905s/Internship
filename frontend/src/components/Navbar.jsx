@@ -1,14 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { FaSun, FaMoon } from "react-icons/fa6";
 
 export default function Navbar() {
   const { user, setUser } = useContext(AuthContext);
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    if (dark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-  }, [dark]);
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -53,8 +50,12 @@ export default function Navbar() {
             <a href="/signup">Signup</a>
           </>
         )}
-        <button onClick={() => setDark((d) => !d)} className="ml-4">
-          {dark ? "🌙" : "☀️"}
+        <button
+          onClick={toggleTheme}
+          className="p-1 ml-4 rounded-lg bg-gray-200 dark:bg-gray-700"
+          title="Toggle Theme"
+        >
+          {theme === "dark" ? <FaSun /> : <FaMoon />}
         </button>
       </div>
     </nav>

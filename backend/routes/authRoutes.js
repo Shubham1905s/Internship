@@ -1,10 +1,28 @@
-const express = require('express');
-const { signup, login, profile } = require('../controllers/authController');
-const auth = require('../middleware/auth');
+import express from "express";
+import { signup, login, profile } from "../controllers/authController.js";
+import { body } from "express-validator";
+import auth from "../middleware/auth.js";
 const router = express.Router();
 
-router.post('/signup', signup);
-router.post('/login', login);
-router.get('/profile', auth, profile);
+router.post(
+  "/signup",
+  [
+    body("name").notEmpty().withMessage("Name is required"),
+    body("email").isEmail().withMessage("Invalid email"),
+    body("password")
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 characters long"),
+  ],
+  signup
+);
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Invalid email"),
+    body("password").notEmpty().withMessage("Password is required"),
+  ],
+  login
+);
+router.get("/profile", auth, profile);
 
-module.exports = router;
+export default router;
