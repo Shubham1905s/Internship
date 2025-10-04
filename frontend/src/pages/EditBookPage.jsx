@@ -93,17 +93,24 @@ export default function EditBookPage() {
           required
           className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
         />
-        <input
+        <select
           name="year"
-          type="number"
-          placeholder="Year"
           value={form.year}
           onChange={handleChange}
           required
-          min={1000}
-          max={2025}
           className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
-        />
+        >
+          <option value="" disabled>
+            Published Year
+          </option>
+          {Array.from({ length: 2025 - 1000 + 1 }, (_, i) => 2025 - i).map(
+            (y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            )
+          )}
+        </select>
         <div className="flex gap-2">
           <button
             type="submit"
