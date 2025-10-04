@@ -93,14 +93,14 @@ export default function AddBookPage() {
         <div className="flex gap-2">
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 rounded"
+            className="bg-blue-600 text-white p-2 rounded"
             disabled={loading}
           >
             {loading ? "Adding..." : "Add Book"}
           </button>
           <button
             type="button"
-            className="bg-gray-400 text-white py-2 rounded"
+            className="bg-gray-400 text-white p-2 rounded"
             onClick={() => navigate(-1)}
           >
             Cancel

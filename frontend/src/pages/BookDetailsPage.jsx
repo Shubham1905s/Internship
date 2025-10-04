@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -28,6 +29,13 @@ export default function BookDetailsPage() {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editRating, setEditRating] = useState(5);
   const [editReviewText, setEditReviewText] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [targetId, setTargetId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -90,23 +98,53 @@ export default function BookDetailsPage() {
     }
   };
 
-  const handleDeleteReview = async (reviewId) => {
-    if (!window.confirm("Delete this review?")) return;
-    try {
-      await api.delete(`/reviews/${reviewId}`);
-      setRefresh((r) => !r);
-    } catch (err) {
-      setError(err.response?.data?.error || "Failed to delete review");
-    }
+  const confirmDeleteBook = () => {
+    setModalTitle("Confirm Book Deletion");
+    setModalMessage(
+      "Are you sure you want to delete this book? This action cannot be undone."
+    );
+    setConfirmAction(() => executeDeleteBook);
+    setTargetId(null);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this book?")) return;
+  const executeDeleteBook = async () => {
+    setIsModalOpen(false);
+    setIsDeleting(true);
     try {
       await api.delete(`/books/${id}`);
       navigate("/");
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to delete book");
+      console.error(err);
+      setError(err.response?.data?.error || "Failed to delete book");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const confirmDeleteReview = (reviewId) => {
+    setModalTitle("Confirm Review Deletion");
+    setModalMessage("Are you sure you want to delete this review?");
+    setConfirmAction(() => executeDeleteReview);
+    setTargetId(reviewId);
+    setIsModalOpen(true);
+  };
+
+  const executeDeleteReview = async () => {
+    setIsModalOpen(false);
+    try {
+      await api.delete(`/reviews/${targetId}`);
+      setRefresh((r) => !r);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to delete review");
+    } finally {
+      setTargetId(null);
+    }
+  };
+
+  const handleModalConfirm = () => {
+    if (confirmAction) {
+      confirmAction();
     }
   };
 
@@ -133,13 +171,21 @@ export default function BookDetailsPage() {
             Edit
           </button>
           <button
-            onClick={handleDelete}
+            onClick={confirmDeleteBook}
+            disabled={isDeleting}
             className="bg-red-600 text-white px-3 py-1 rounded"
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       )}
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleModalConfirm}
+        title={modalTitle}
+        message={modalMessage}
+      />
       <hr className="my-4 border-gray-200 dark:border-gray-700" />
       <h3 className="font-bold mb-2">Add a Review</h3>
       <form onSubmit={handleReview} className="flex flex-col gap-2 mb-4">
@@ -234,7 +280,7 @@ export default function BookDetailsPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteReview(r._id)}
+                        onClick={() => confirmDeleteReview(r._id)}
                         className="text-red-600 text-xs"
                       >
                         Delete
