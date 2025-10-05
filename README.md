@@ -16,10 +16,6 @@ This guide will help you set up and run the project seamlessly on your local sys
 
 ---
 
-## 💻 Project Structure
-
-The project is divided into two major parts — the **backend** (server/API) and the **frontend** (client).
-
 
 ### 💻 Project Structure
 
@@ -28,15 +24,27 @@ The project is organized into two main directories: `backend` for the server and
 
 ---
 
+
+📸 **Visual Overview:**
+
+<img width="545" height="452" alt="project-structure" src="https://github.com/user-attachments/assets/874b0af2-ca29-412e-a2c0-e65e68f1654f" />
+
+---
+
 ## ⚙️ Prerequisites
 
-Before running the project, ensure that the following are installed on your system:
+Before starting, ensure you have the following installed:
 
 - [Node.js](https://nodejs.org/en/download/) (v16 or above)
 - [npm](https://www.npmjs.com/)
 - [MongoDB Community Server](https://www.mongodb.com/try/download/community)
 
 ---
+
+## 🗄️ Setting up MongoDB (Localhost)
+
+1. Install **MongoDB Community Server** and start the service.
+2. Default MongoDB connection URL:
 
 ## 🗄️ Setting up MongoDB (Localhost)
 
