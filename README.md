@@ -72,3 +72,13 @@ Server running on port 5000
 Shubham Mirashi
 Full Stack Developer | MERN Enthusiast
 📧 shubhammirashi303@gmail.com
+
+
+screenshots
+
+<img width="1911" height="782" alt="image" src="https://github.com/user-attachments/assets/bd283130-b0e9-4ba3-8c11-6a65e03c57c0" />
+<img width="746" height="649" alt="image" src="https://github.com/user-attachments/assets/5f5642ab-1087-4dab-bd96-ba3847c13665" />
+<img width="1877" height="486" alt="image" src="https://github.com/user-attachments/assets/b00100cb-3eab-4eb3-81b0-a9f536b6c6ca" />
+
+
+
