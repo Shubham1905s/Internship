@@ -21,19 +21,8 @@ Export to Sheets
 ### 💻 Project Structure
 
 The project is organized into two main directories: `backend` for the server and API, and `frontend` for the client-side React application.
-project-root/
-│
-├── backend/            # Node.js + Express.js + MongoDB server
-│   ├── server.js       # Main server file
-│   ├── models/         # MongoDB schemas
-│   ├── routes/         # API routes definitions
-│   ├── controllers/    # Route handler logic
-│   └── .env            # Environment variables (connection string, port, etc.)
-│
-└── frontend/           # React.js client (Vite or CRA)
-├── src/            # Source code for the React application
-├── public/         # Static assets
-└── package.json    # Frontend dependencies
+<img width="545" height="452" alt="image" src="https://github.com/user-attachments/assets/874b0af2-ca29-412e-a2c0-e65e68f1654f" />
+
 ---
 
 ## ⚙️ Prerequisites
