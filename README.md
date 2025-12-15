@@ -1,6 +1,6 @@
 # 🚀 MERN Stack Project
 
-A **Robust Full-Stack web application** built using the **MERN (MongoDB, Express.js, React.js, Node.js)** stack.  
+A **Robust Full-Stack Web application** built using the **MERN (MongoDB, Express.js, React.js, Node.js)** stack.  
 This guide will help you set up and run the project seamlessly on your local system.
 
 ---
