@@ -36,7 +36,7 @@ The project is organized into two main directories: `backend` for the server and
 
 
 Install all dependencies
-Run the development server
+Run the development server.
 Your frontend will now be running on: ➜ Local: http://localhost:5173/
 
 ⚡ Setting up the Backend
