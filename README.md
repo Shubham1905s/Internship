@@ -101,5 +101,5 @@ Review:
 <img width="1881" height="908" alt="image" src="https://github.com/user-attachments/assets/2c384b63-7929-4418-b37b-0ebe9de379f4" />
 
 Shubham Mirashi
-Full Stack Developer | MERN Enthusiast
+Full Stack Developer | MERN Enthusiast.
 📧 shubhammirashi303@gmail.com
