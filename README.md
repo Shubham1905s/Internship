@@ -80,7 +80,7 @@ start the development server:
 npm run dev
 
 
-The frontend will be live at:
+The frontend will be live at:   
 👉 http://localhost:5173/
 
 [Note]: Both the Light mode and Dark Mode are added.
