@@ -29,7 +29,7 @@ The project is organized into two main directories: `backend` for the server and
 ## 🗄️ Setting up MongoDB (Localhost)
 
 1. Download and install **MongoDB Community Server**.
-2. Start the MongoDB service.
+2. Start the MongoDB service
 3. Default connection URL:  mongodb://127.0.0.1:27017/your-database-name PORT=5000
 
 
