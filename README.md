@@ -39,7 +39,7 @@ Install all dependencies
 Run the development server.
 Your frontend will now be running on: ➜ Local: http://localhost:5173/
 
-⚡ Setting up the Backend
+⚡ Setting up the Backend.
 
 Open a new terminal and navigate to the backend directory:
 
