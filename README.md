@@ -86,7 +86,7 @@ The frontend will be live at:
 [Note]: Both the Light mode and Dark Mode are added.
 
 screenshots
-
+   
 Home Page:
 <img width="1912" height="928" alt="image" src="https://github.com/user-attachments/assets/f7f1e9b6-909e-49bd-b9fd-eb42c21f1b06" />
 
