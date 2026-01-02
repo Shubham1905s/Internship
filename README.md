@@ -6,7 +6,7 @@ This guide will help you set up and run the project seamlessly on your local sys
 ---
 
 ## 🧠 Tech Stack
-
+ 
 | Technology | Description |
 |-------------|-------------|
 | **MongoDB** | A flexible, schemaless NoSQL database for modern applications. |
