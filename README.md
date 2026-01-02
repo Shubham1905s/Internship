@@ -67,7 +67,7 @@ Server running on port 5000
 
 Open another terminal and navigate to the frontend directory:
 
-cd frontend
+cd frontend 
 
 
 Install dependencies:
