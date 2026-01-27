@@ -5,7 +5,7 @@ This guide will help you set up and run the project seamlessly on your local sys
 
 ---
 
-## 🧠 Tech Stack
+## 🧠 Tech Stack 
  
 | Technology | Description |
 |-------------|-------------|
